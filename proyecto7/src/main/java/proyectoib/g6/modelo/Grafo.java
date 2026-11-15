@@ -124,7 +124,7 @@ public class Grafo {
         nuevoVertice(nombre, nombre, 0, 0);
     }
     
-    public void nuevoVertice(String nombre) {
+    public void nuevoVertice(String nombre, String nombreEdificio, double x, double y) {
 
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new IllegalArgumentException(
@@ -142,7 +142,7 @@ public class Grafo {
             ampliarVertices();
         }
 
-        Vertice nuevo = new Vertice(nombre);
+        Vertice nuevo = new Vertice(nombre, nombre Edificio, x, y);
 
         nuevo.asigVert(numVertices);
 

@@ -15,16 +15,49 @@ public class Vertice {
     // Posición del vértice dentro del grafo.
     private int numVertice;
 
-    /*
-     * Constructor:
-     * Inicializa el vértice con su nombre.
+    private String nombreEdificio;
+    private double x;
+    private double y;
+
+    /* Inicializa el vértice con su nombre.
      *
      * Se asigna -1 porque todavía no tiene
      * una posición dentro del grafo.
      */
+
     public Vertice(String nombre) {
+        this(nombre, nombre, 0, 0);
+    }
+
+    /*
+     * Constructor completo se usa al cargar
+     * los edificios desde el archivo CSV.
+     */
+    public Vertice(String nombre, String nombreEdificio,
+                   double x, double y) {
         this.nombre = nombre;
+        this.nombreEdificio = nombreEdificio;
+        this.x = x;
+        this.y = y;
         this.numVertice = -1;
+    }
+
+    public String getNombreEdificio() {
+        return nombreEdificio;
+    }
+
+    /*
+     * Devuelve la coordenada X del edificio.
+     */
+    public double getX() {
+        return x;
+    }
+
+    /*
+     * Devuelve la coordenada Y del edificio.
+     */
+    public double getY() {
+        return y;
     }
 
     /*

@@ -11,45 +11,45 @@ import proyectoib.g6.modelo.Grafo;
 import proyectoib.g6.modelo.ResultadoMST;
 
 /*
- * Compara el tiempo de ejecucion y el consumo de memoria heap
- * entre los algoritmos Kruskal y Prim usando los archivos CSV
- * y redes generadas de distinto tamano.
+ * Compara el tiempo de ejecucion y el consumo de memoria
+ * entre los algoritmos Kruskal y Prim usando archivos CSV
+ * y redes generadas
  */
 public class MedidorRendimiento {
 
-    // Cantidad de repeticiones para calcular el tiempo promedio.
+    // Cantidad de repeticiones para calcular el tiempo promedio
     private static final int repeticiones = 10;
 
-    // Cantidad de ejecuciones retenidas para medir el aumento de memoria.
+    // Cantidad de ejecuciones retenidas para medir el aumento de memoria
     private static final int copias = 30;
 
-    // Generador con semilla fija para crear siempre los mismos grafos.
+    // Generador con semilla fija para crear siempre los mismos grafos
     private static final Random aleatorio = new Random(42);
 
-    // Herramienta de Java para consultar el uso de memoria heap.
+    // Consultar el uso de memoria heap
     private static final MemoryMXBean memoria =
             ManagementFactory.getMemoryMXBean();
 
-    // Devuelve los bytes ocupados actualmente en la memoria heap.
+    // Devuelve los bytes ocupados actualmente en la memoria 
     private static long memoriaUsada() {
         return memoria.getHeapMemoryUsage().getUsed();
     }
 
-    // Ejecuta las pruebas con los archivos CSV y con redes dispersas y densas.
+    // Ejecuta las pruebas con los archivos CSV y con redes diferentes
     public static void main(String[] args) {
 
         int[] tamanos = {10, 50, 100, 200, 300};
         Kruskal kruskal = new Kruskal();
         Prim prim = new Prim();
 
-        // Calentamiento inicial de la maquina virtual para estabilizar tiempos.
+        // Calentamiento inicial 
         Grafo calentamiento = generarGrafoDisperso(20);
         for (int i = 0; i < 5; i++) {
             kruskal.ejecutarKruskal(calentamiento);
             prim.ejecutarPrim(calentamiento);
         }
 
-        // Prueba con los archivos CSV reales del proyecto.
+        // Prueba con los archivos CSV 
         System.out.println("Archivo CSV");
         try {
             Grafo grafoCSV = LectorCSV.cargarGrafo( "datos/edificios.csv", "datos/conexiones.csv" );
@@ -58,14 +58,14 @@ public class MedidorRendimiento {
             System.out.println("No se pudo cargar los archivos CSV: " + e.getMessage());
         }
 
-        // Pruebas con redes poco densas.
+        // Pruebas con redes poco densas
         System.out.println("\nRedes densas - Dispersas");
         for (int i = 0; i < tamanos.length; i++) {
             Grafo grafoDisperso = generarGrafoDisperso(tamanos[i]);
             imprimirTablaComparativa(grafoDisperso, kruskal, prim);
         }
 
-        // Pruebas con redes muy densas.
+        // Pruebas con redes muy densas
         System.out.println("\nRedes my densas");
         for (int i = 0; i < tamanos.length; i++) {
             Grafo grafoDenso = generarGrafoDenso(tamanos[i]);
@@ -73,18 +73,18 @@ public class MedidorRendimiento {
         }
     }
 
-    // Mide tiempo y memoria de Kruskal y Prim sobre un grafo e imprime la tabla.
+    // Mide tiempo y memoria de Kruskal y Prim sobre un grafo e imprime la tabla
     private static void imprimirTablaComparativa(Grafo grafo, Kruskal kruskal, Prim prim) {
 
-        // Calcular tiempos promedio en milisegundos.
+        // Calcular tiempos promedio en milisegundos
         double tiempoKruskalMs = medirTiempoKruskal(grafo, kruskal) / 1_000_000.0;
         double tiempoPrimMs = medirTiempoPrim(grafo, prim) / 1_000_000.0;
 
-        // Calcular consumo de memoria promedio en kilobytes.
+        // Calcular consumo de memoria promedio en kilobytes
         double memKruskalKB = medirMemoriaKruskal(grafo, kruskal) / 1024.0;
         double memPrimKB = medirMemoriaPrim(grafo, prim) / 1024.0;
 
-        // Verificar que ambos arboles coincidan en costo y conectividad.
+        // Verificar que ambos arboles coincidan en costo
         ResultadoMST resK = kruskal.ejecutarKruskal(grafo);
         ResultadoMST resP = prim.ejecutarPrim(grafo);
 
@@ -102,7 +102,7 @@ public class MedidorRendimiento {
         System.out.println("=============================================");
     }
 
-    // Ejecuta Kruskal varias veces y devuelve el tiempo promedio en nanosegundos.
+    // Ejecuta Kruskal y devuelve el tiempo promedio
     public static long medirTiempoKruskal(Grafo grafo, Kruskal kruskal) {
 
         long totalNs = 0;
@@ -117,7 +117,7 @@ public class MedidorRendimiento {
         return totalNs / repeticiones;
     }
 
-    // Ejecuta Prim varias veces y devuelve el tiempo promedio en nanosegundos.
+    // Ejecuta Prim y devuelve el tiempo
     public static long medirTiempoPrim(Grafo grafo, Prim prim) {
 
         long totalNs = 0;
@@ -132,7 +132,7 @@ public class MedidorRendimiento {
         return totalNs / repeticiones;
     }
 
-    // Limpia memoria previa, ejecuta Kruskal varias veces y devuelve los bytes consumidos por corrida.
+    // Limpia memoria , ejecuta Kruskal y devuelve la memoria consumida
     public static long medirMemoriaKruskal(Grafo grafo, Kruskal kruskal) {
 
         System.gc();
@@ -150,7 +150,6 @@ public class MedidorRendimiento {
 
         long despues = memoriaUsada();
 
-        // Recorrer los resultados para evitar que el compilador los descarte.
         double sumaControl = 0;
         for (int i = 0; i < copias; i++) {
             sumaControl = sumaControl + resultados[i].getCostoTotal();
@@ -163,7 +162,7 @@ public class MedidorRendimiento {
         return diferencia / copias;
     }
 
-    // Limpia memoria previa, ejecuta Prim varias veces y devuelve los bytes consumidos por corrida.
+    // Limpia memoria, ejecuta Prim y devuelve la memoria consumida
     public static long medirMemoriaPrim(Grafo grafo, Prim prim) {
 
         System.gc();
@@ -181,7 +180,6 @@ public class MedidorRendimiento {
 
         long despues = memoriaUsada();
 
-        // Recorrer los resultados para evitar que el compilador los descarte.
         double sumaControl = 0;
         for (int i = 0; i < copias; i++) {
             sumaControl = sumaControl + resultados[i].getCostoTotal();
@@ -194,18 +192,18 @@ public class MedidorRendimiento {
         return diferencia / copias;
     }
 
-    // Crea un grafo conexo con pocas conexiones adicionales entre edificios.
+    // Crea un grafo conexo con pocas conexiones
     public static Grafo generarGrafoDisperso(int numNodos) {
 
         Grafo grafo = new Grafo();
         boolean[][] conectada = new boolean[numNodos][numNodos];
 
-        // Crear los vertices del grafo.
+        // Crear los vertices del grafo
         for (int i = 0; i < numNodos; i++) {
             grafo.nuevoVertice("E" + i);
         }
 
-        // Unir cada edificio con uno anterior para asegurar que la red sea conexa.
+        // Unir cada edificio 
         for (int i = 1; i < numNodos; i++) {
             int vecino = aleatorio.nextInt(i);
             double costo = 1 + aleatorio.nextInt(100);
@@ -215,7 +213,7 @@ public class MedidorRendimiento {
             conectada[vecino][i] = true;
         }
 
-        // Agregar pocas conexiones extra sin repetir pares.
+        // Agregar pocas conexiones 
         int extras = numNodos / 2;
         int agregadas = 0;
         int intentos = 0;
@@ -237,18 +235,18 @@ public class MedidorRendimiento {
         return grafo;
     }
 
-    // Crea un grafo conexo donde cerca del sesenta por ciento de los pares estan conectados.
+    // Crea un grafo conexo 
     public static Grafo generarGrafoDenso(int numNodos) {
 
         Grafo grafo = new Grafo();
         boolean[][] conectada = new boolean[numNodos][numNodos];
 
-        // Crear los vertices del grafo.
+        // Crear los vertices del grafo
         for (int i = 0; i < numNodos; i++) {
             grafo.nuevoVertice("E" + i);
         }
 
-        // Asegurar conectividad inicial entre todos los edificios.
+        // Asegurar conectividad entre todos los edificios
         for (int i = 1; i < numNodos; i++) {
             int vecino = aleatorio.nextInt(i);
             double costo = 1 + aleatorio.nextInt(100);
@@ -258,7 +256,7 @@ public class MedidorRendimiento {
             conectada[vecino][i] = true;
         }
 
-        // Conectar gran parte de los pares restantes para lograr alta densidad.
+        // Conectar gran parte de los pares
         for (int i = 0; i < numNodos; i++) {
             for (int j = i + 1; j < numNodos; j++) {
                 if (!conectada[i][j] && aleatorio.nextInt(100) < 60) {

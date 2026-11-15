@@ -19,19 +19,19 @@ public class PruebaPrim {
 
     public static void main(String[] args) {
 
-        System.out.println("--- Red conexa (5 edificios) ---");
+        System.out.println("--- Red conexa ---");
         pruebaRedConexa();
 
-        System.out.println("\n--- Red desconectada (un edificio aislado) ---");
+        System.out.println("\n--- Red desconectada ---");
         pruebaEdificioAislado();
 
-        System.out.println("\n--- Red desconectada (dos grupos) ---");
+        System.out.println("\n--- Red desconectada ---");
         pruebaDosGrupos();
 
         System.out.println("\n--- Casos límite ---");
         pruebaCasosLimite();
 
-        System.out.println("\n--- Costos iguales (empates) ---");
+        System.out.println("\n--- Costos iguales ---");
         pruebaEmpates();
 
         System.out.println("\n--- Verificación cruzada en redes densas ---");
@@ -57,13 +57,13 @@ public class PruebaPrim {
 
     private static void pruebaEdificioAislado() {
 
-        // Igual que edificios.csv: F no tiene conexiones.
+        // F no tiene conexiones.
         Grafo red = redCincoEdificios();
         red.nuevoVertice("F");
 
         ResultadoMST prim = new Prim().ejecutarPrim(red);
 
-        verificar("Prim: NO es conexo (no existe MST completo)",
+        verificar("Prim: NO es conexo, no existe MST completo",
             !prim.esConexo());
         verificar("Prim: conserva las 4 aristas posibles",
             prim.getNumAristas() == 4);
@@ -86,7 +86,7 @@ public class PruebaPrim {
         ResultadoMST prim = new Prim().ejecutarPrim(red);
 
         verificar("Prim: NO es conexo", !prim.esConexo());
-        verificar("Prim: 2 aristas (una por grupo)",
+        verificar("Prim: 2 aristas",
             prim.getNumAristas() == 2);
         verificar("Prim: costo 3", prim.getCostoTotal() == 3);
         verificar("Prim y Kruskal coinciden",
@@ -123,7 +123,7 @@ public class PruebaPrim {
 
     private static void pruebaEmpates() {
 
-        // Cuatro edificios, todas las conexiones con costo 5.
+        // Cuatro edificios todas las conexiones con costo 5.
         Grafo red = redCostosIguales();
 
         ResultadoMST prim = new Prim().ejecutarPrim(red);
@@ -134,7 +134,7 @@ public class PruebaPrim {
         verificar("Mismo costo total",
             VerificadorMST.coinciden(prim, kruskal));
 
-        System.out.println("  (info) ¿Mismas aristas? "
+        System.out.println(" ¿Mismas aristas? "
             + (mismasAristas(prim, kruskal) ? "sí" : "no, y es válido"));
     }
 

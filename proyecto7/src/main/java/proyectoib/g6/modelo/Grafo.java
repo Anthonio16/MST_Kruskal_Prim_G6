@@ -142,7 +142,7 @@ public class Grafo {
             ampliarVertices();
         }
 
-        Vertice nuevo = new Vertice(nombre, nombre Edificio, x, y);
+        Vertice nuevo = new Vertice(nombre, nombreEdificio, x, y);
 
         nuevo.asigVert(numVertices);
 

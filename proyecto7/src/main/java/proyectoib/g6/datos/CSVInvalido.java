@@ -7,15 +7,13 @@ import java.io.File;
  * está vacío o contiene datos incorrectos.
  */
 
-public class CSVInvalidoException extends Exception {
+public class CSVInvalido extends Exception {
 
     private final String archivo;
     private final int linea;
 
   //Constructor
-    public CSVInvalidoException(String ruta,
-                                int linea,
-                                String detalle) {
+    public CSVInvalido(String ruta, int linea,  String detalle) {
 
         super(construirMensaje(ruta, linea, detalle));
 
@@ -23,8 +21,7 @@ public class CSVInvalidoException extends Exception {
         this.linea = linea;
     }
 
-    private static String construirMensaje(
-            String ruta, int linea, String detalle) {
+    private static String construirMensaje(String ruta, int linea, String detalle) {
 
         String nombre = new File(ruta).getName();
 

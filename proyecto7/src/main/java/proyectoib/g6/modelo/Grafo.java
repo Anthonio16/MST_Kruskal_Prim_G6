@@ -119,6 +119,11 @@ public class Grafo {
      * 3. Ampliar el arreglo si está lleno.
      * 4. Crear y numerar el vértice.
      */
+
+     public void nuevoVertice(String nombre) {
+        nuevoVertice(nombre, nombre, 0, 0);
+    }
+    
     public void nuevoVertice(String nombre) {
 
         if (nombre == null || nombre.trim().isEmpty()) {

@@ -262,6 +262,69 @@ public class Grafo {
         return aristas[posicion];
     }
 
+    public Grafo copiarSinArista(int origen, int destino) {
+
+        boolean existe = false;
+
+        for (int i = 0; i < numAristas; i++) {
+
+            if (mismoPar(aristas[i], origen, destino)) {
+                existe = true;
+            }
+        }
+
+        if (!existe) {
+            throw new IllegalArgumentException(
+                "La arista a retirar no existe"
+            );
+        }
+
+        Grafo copia = new Grafo();
+
+        for (int i = 0; i < numVertices; i++) {
+
+            Vertice v = vertices[i];
+
+            copia.nuevoVertice(
+                v.nomVertice(), v.getNombreEdificio(),
+                v.getX(), v.getY()
+            );
+        }
+
+        for (int i = 0; i < numAristas; i++) {
+
+            Arista a = aristas[i];
+
+            if (!mismoPar(a, origen, destino)) {
+
+                copia.nuevaArista(
+                    vertices[a.getOrigen()].nomVertice(),
+                    vertices[a.getDestino()].nomVertice(),
+                    a.getCosto()
+                );
+            }
+        }
+
+        return copia;
+    }
+
+    /*
+     * Indica si una arista une los vértices
+     * a y b en cualquier dirección.
+     */
+    private boolean mismoPar(Arista arista, int a, int b) {
+
+        boolean directo =
+            arista.getOrigen() == a &&
+            arista.getDestino() == b;
+
+        boolean inverso =
+            arista.getOrigen() == b &&
+            arista.getDestino() == a;
+
+        return directo || inverso;
+    }
+    
     /*
      * MOSTRAR EL GRAFO
      *

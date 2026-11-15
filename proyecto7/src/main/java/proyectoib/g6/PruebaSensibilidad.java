@@ -28,10 +28,10 @@ public class PruebaSensibilidad {
         System.out.println("\n--- 3. Costos iguales ---");
         pruebaCostosIguales();
 
-        System.out.println("\n--- 4a. Red poco densa (árbol) ---");
+        System.out.println("\n--- 4a. Red poco densa ---");
         pruebaRedEsparsa();
 
-        System.out.println("\n--- 4b. Red muy densa (completa) ---");
+        System.out.println("\n--- 4b. Red muy densa ---");
         pruebaRedDensa();
 
         System.out.println("\n--- Enlaces inválidos ---");
@@ -132,7 +132,7 @@ public class PruebaSensibilidad {
 
         verificar("Todos los fallos tienen reemplazo",
             todosReemplazables);
-        verificar("Variación 0 en todos (el reemplazo cuesta igual)",
+        verificar("Variación 0 en todos, el reemplazo cuesta igual",
             sinVariacion);
         verificar("La red siempre sigue conectada", conectadas);
     }

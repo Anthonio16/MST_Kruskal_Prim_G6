@@ -1,7 +1,7 @@
 package proyectoib.g6.interfaz;
 
 /*
- * Inicia la interfaz JavaFX sin requerir argumentos de modulos.
+ * Inicia la interfaz JavaFX
  */
 public class Lanzador {
 

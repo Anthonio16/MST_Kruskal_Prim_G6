@@ -1,7 +1,13 @@
 id,nombre,x,y
-A,Biblioteca,65,52
-B,Laboratorios,164,35
-C,Rectorado,281,65
-D,Facultad,89,177
-E,Auditorio,263,178
-F,Parqueadero,164,264
+2,Museo,375,350
+3,Administracion Central,330,340
+6,Ingenieria Civil,250,390
+12,Facultad de Ciencias,405,280
+15,Ingenieria Mecanica,410,155
+16,FIEE,450,125
+20,FIS,500,220
+21,ESFOT,560,195
+24,Produccion Mecanica,615,195
+33,Agora de Tecnologos,550,270
+36,CEC,620,100
+40,Gimnasio,470,375

@@ -2,6 +2,7 @@ package proyectoib.g6;
 
 import proyectoib.g6.algoritmos.AnalizadorSensibilidad;
 import proyectoib.g6.algoritmos.VerificadorMST;
+import proyectoib.g6.modelo.Arista;
 import proyectoib.g6.modelo.Grafo;
 import proyectoib.g6.modelo.InformeSensibilidad;
 import proyectoib.g6.modelo.InformeSensibilidad.TipoFallo;

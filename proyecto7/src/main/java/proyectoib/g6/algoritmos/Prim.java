@@ -1,6 +1,7 @@
 package proyectoib.g6.algoritmos;
 
-import java.util.PriorityQueue;
+
+import proyectoib.g6.estructuras.ColaPrioridad;
 import proyectoib.g6.modelo.Arista;
 import proyectoib.g6.modelo.Grafo;
 import proyectoib.g6.modelo.ResultadoMST;

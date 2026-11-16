@@ -11,9 +11,9 @@ import proyectoib.g6.modelo.ResultadoMST;
  *
  * Simula la falla de un enlace del MST
  * Otro enlace del grafo reconecta
- *   las dos partes y el costo sube.
+ * las dos partes y el costo sube.
  * El enlace era un puente y no
- *   hay alternativa ya no existe MST completo.
+ * hay alternativa ya no existe MST completo.
  */
 public class AnalizadorSensibilidad {
 
@@ -22,7 +22,10 @@ public class AnalizadorSensibilidad {
 
     /*
      * CONSTRUCTOR
+     *
      * Recibe el grafo original y calcula su MST.
+     *
+     * Complejidad: O(V + E log E)
      */
     public AnalizadorSensibilidad(Grafo grafo) {
 
@@ -39,14 +42,20 @@ public class AnalizadorSensibilidad {
     /*
      * Devuelve el MST original, de donde se elige
      * el enlace que va a fallar.
+     *
+     * Si el grafo es desconectado es un bosque
      */
     public ResultadoMST getMstOriginal() {
         return mstOriginal;
     }
 
     /*
+     * ANALIZAR POR POSICIÓN
+     *
      * Recibe la posición del enlace dentro del MST
      * original.
+     *
+     * Complejidad: O(V + E log E)
      */
     public InformeSensibilidad analizar(int posicionEnMST) {
 
@@ -62,6 +71,7 @@ public class AnalizadorSensibilidad {
         Arista retirada = mstOriginal.getArista(posicionEnMST);
 
         // PASO 1: Copia del grafo sin el enlace.
+        // El grafo original no se toca.
         Grafo copia = grafo.copiarSinArista(
             retirada.getOrigen(), retirada.getDestino()
         );
@@ -69,30 +79,48 @@ public class AnalizadorSensibilidad {
         // PASO 2: Recalcular el MST sobre la copia.
         ResultadoMST nuevo = new Kruskal().ejecutarKruskal(copia);
 
-        // PASO 3: Buscar el enlace que podría reemplazarlo.
-        Arista reemplazo = buscarReemplazo(posicionEnMST);
+        // PASO 3: Contar los componentes antes y después.
+        //
+        // Un bosque de expansión mínima tiene
+        // (vértices - componentes) aristas.
+        int numVertices = grafo.getNumVertices();
+
+        int componentesOriginal =
+            numVertices - mstOriginal.getNumAristas();
+
+        int componentesNuevo =
+            numVertices - nuevo.getNumAristas();
 
         // PASO 4: Clasificar el fallo.
+        //
+        // Se compara la cantidad de componentes para que también funcione cuando
+        // la red original ya estaba desconectada.
         TipoFallo tipo = TipoFallo.CON_REEMPLAZO;
 
-        if (nuevo.getNumAristas() < mstOriginal.getNumAristas()) {
+        if (componentesNuevo > componentesOriginal) {
             tipo = TipoFallo.DESCONECTA_RED;
         }
 
+        // PASO 5: Identificar el enlace de reemplazo.
         String nombreReemplazo = null;
         double costoReemplazo = 0;
 
-        if (tipo == TipoFallo.CON_REEMPLAZO && reemplazo != null) {
-            nombreReemplazo = describir(reemplazo);
-            costoReemplazo = reemplazo.getCosto();
+        if (tipo == TipoFallo.CON_REEMPLAZO) {
+
+            Arista reemplazo = buscarReemplazo(posicionEnMST);
+
+            if (reemplazo != null) {
+                nombreReemplazo = describir(reemplazo);
+                costoReemplazo = reemplazo.getCosto();
+            }
         }
 
         return new InformeSensibilidad(
             describir(retirada),
             retirada.getCosto(),
             tipo,
-            nuevo.esConexo(),
-            mstOriginal.esConexo(),
+            componentesOriginal,
+            componentesNuevo,
             mstOriginal.getCostoTotal(),
             nuevo.getCostoTotal(),
             nombreReemplazo,
@@ -102,8 +130,13 @@ public class AnalizadorSensibilidad {
     }
 
     /*
-     * Recibe los ids de los dos edificios del enlace el enlace debe pertenecer
+     * ANALIZAR POR EDIFICIOS
+     *
+     * Recibe los ids de los dos edificios del enlace. 
+     * El enlace debe pertenecer
      * al MST original y el orden no importa.
+     *
+     * Complejidad: O(V + E log E)
      */
     public InformeSensibilidad analizar(String origen,
                                         String destino) {
@@ -139,8 +172,12 @@ public class AnalizadorSensibilidad {
     }
 
     /*
+     * ANALIZAR TODOS LOS ENLACES
+     *
      * Devuelve un informe por cada enlace del MST
      * original en el mismo orden del MST.
+     *
+     * Complejidad: O(V (V + E log E))
      */
     public InformeSensibilidad[] analizarTodos() {
 
@@ -155,11 +192,15 @@ public class AnalizadorSensibilidad {
     }
 
     /*
-     * Al quitar un enlace del MST, el árbol se parte en
-     * dos zonas. El reemplazo es la arista más barata del
-     * grafo que une esas dos zonas.
+     * BUSCAR ENLACE DE REEMPLAZO
+     *
+     * Al quitar un enlace del MST, el árbol de su componente
+     * se parte en dos zonas. El reemplazo es la arista más
+     * barata del grafo que une esas dos zonas.
      *
      * Devuelve null si no existe ninguna.
+     *
+     * Complejidad: O(V + E α(V))
      */
     private Arista buscarReemplazo(int posicionRetirada) {
 
@@ -202,6 +243,12 @@ public class AnalizadorSensibilidad {
         return mejor;
     }
 
+    /*
+     * Indica si dos aristas unen los mismos vértices,
+     * en cualquier dirección.
+     *
+     * Complejidad: O(1)
+     */
     private boolean mismoEnlace(Arista a, Arista b) {
 
         boolean directo =
@@ -216,7 +263,7 @@ public class AnalizadorSensibilidad {
     }
 
     /*
-     * Texto de un enlace con los nombres de sus edificios
+     * Complejidad: O(1)
      */
     private String describir(Arista a) {
 

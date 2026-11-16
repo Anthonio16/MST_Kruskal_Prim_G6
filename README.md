@@ -4,13 +4,13 @@ Aplicación en Java y JavaFX para calcular el Árbol de Expansión Mínima (MST)
 
 ## **1. Versión de Java y Dependencias**
 
-Versión de Java: JDK 17 o superior.
+Versión de Java: JDK 22 o superior.
 
 IDE: Eclipse
 
 Dependencias:
 
-JavaFX - javafx-controls, versión 17 o superior gestionado automáticamente mediante Maven (pom.xml)
+JavaFX - javafx-controls, versión 24 o superior gestionado automáticamente mediante Maven (pom.xml)
 
 Bibliotecas estándar de Java para el modelo, algoritmos y medición de rendimiento
 
@@ -52,13 +52,11 @@ En Eclipse, vaya a File > Import > Maven > Existing Maven Projects.
 
 Seleccione la carpeta del proyecto donde se encuentra el archivo pom.xml y haga clic en Finish.
 
-Compilar con Maven:
-
 Haga clic derecho sobre el proyecto en el Package Explorer y seleccione Run
 
 Ejecutar la Interfaz Gráfica:
 
-Haga clic derecho sobre el proyecto y seleccione Run
+Haga clic derecho sobre el proyecto, seleccione el package proyectoib.g6.interfaz, seleccione la clase Lanzador.java y seleccione Run
 
 ## **4. Cómo Reproducir un Experimento Básico**
 

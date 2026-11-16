@@ -76,10 +76,9 @@ public class Grafo {
     /*
      * AMPLIAR EL ARREGLO DE VÉRTICES
      *
-     * Cuando el arreglo está lleno:
-     * 1. Crear otro con el doble de capacidad.
-     * 2. Copiar los vértices existentes.
-     * 3. Sustituir el arreglo anterior.
+     * Complejidad: O(V) cada vez que se amplía. Como la
+     * capacidad se duplica, el costo amortizado por
+     * inserción es O(1).
      */
     private void ampliarVertices() {
 
@@ -98,6 +97,9 @@ public class Grafo {
      *
      * Se aplica el mismo procedimiento
      * de crecimiento manual.
+     *
+     * Complejidad: O(E) cada vez que se amplía;
+     * amortizado O(1) por inserción.
      */
     private void ampliarAristas() {
 
@@ -113,18 +115,23 @@ public class Grafo {
 
     /*
      * AGREGAR UN NUEVO VÉRTICE
-     *
-     * 1. Comprobar que el nombre sea válido.
-     * 2. Verificar que no exista.
-     * 3. Ampliar el arreglo si está lleno.
-     * 4. Crear y numerar el vértice.
      */
-
-     public void nuevoVertice(String nombre) {
+    public void nuevoVertice(String nombre) {
         nuevoVertice(nombre, nombre, 0, 0);
     }
-    
-    public void nuevoVertice(String nombre, String nombreEdificio, double x, double y) {
+
+    /*
+     * AGREGAR UN VÉRTICE CON TODOS SUS DATOS
+     *
+     * Se usa al cargar el CSV de edificios:
+     * id, nombre del edificio y
+     * coordenadas para la interfaz.
+     *
+     * Complejidad: O(V), por la búsqueda de duplicados.
+     */
+    public void nuevoVertice(String nombre,
+                             String nombreEdificio,
+                             double x, double y) {
 
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new IllegalArgumentException(
@@ -142,7 +149,8 @@ public class Grafo {
             ampliarVertices();
         }
 
-        Vertice nuevo = new Vertice(nombre, nombreEdificio, x, y);
+        Vertice nuevo =
+            new Vertice(nombre, nombreEdificio, x, y);
 
         nuevo.asigVert(numVertices);
 
@@ -159,6 +167,11 @@ public class Grafo {
      *
      * Como el grafo es no dirigido,
      * A-B y B-A son la misma conexión.
+     *
+     * Complejidad: O(V + E). Buscar los dos edificios
+     * cuesta O(V) y comprobar que la conexión no esté
+     * repetida recorre las E aristas. Cargar E conexiones
+     * cuesta entonces O(E (V + E)) en total.
      */
     public void nuevaArista(
             String origen, String destino, double costo) {
@@ -222,6 +235,8 @@ public class Grafo {
 
     /*
      * DEVOLVER LA CANTIDAD DE VÉRTICES
+     *
+     * Complejidad: O(1)
      */
     public int getNumVertices() {
         return numVertices;
@@ -229,6 +244,8 @@ public class Grafo {
 
     /*
      * DEVOLVER LA CANTIDAD DE ARISTAS
+     *
+     * Complejidad: O(1)
      */
     public int getNumAristas() {
         return numAristas;
@@ -236,6 +253,8 @@ public class Grafo {
 
     /*
      * DEVOLVER UN VÉRTICE POR SU POSICIÓN
+     *
+     * Complejidad: O(1)
      */
     public Vertice getVertice(int posicion) {
 
@@ -250,6 +269,8 @@ public class Grafo {
 
     /*
      * DEVOLVER UNA ARISTA POR SU POSICIÓN
+     *
+     * Complejidad: O(1)
      */
     public Arista getArista(int posicion) {
 
@@ -262,6 +283,15 @@ public class Grafo {
         return aristas[posicion];
     }
 
+    /*
+     * COPIAR EL GRAFO SIN UNA ARISTA
+     *
+     * Crea un grafo nuevo e independiente con los
+     * mismos vértices y todas las aristas
+     * excepto la que une origen y destino.
+     *
+     * Complejidad: O(V + E)
+     */
     public Grafo copiarSinArista(int origen, int destino) {
 
         boolean existe = false;
@@ -281,36 +311,54 @@ public class Grafo {
 
         Grafo copia = new Grafo();
 
+        // Arreglos del mismo tamaño que los originales.
+        // Los datos ya fueron validados al crear este grafo,
+        // por eso se copian directamente sin volver a
+        // comprobar duplicados.
+        copia.vertices = new Vertice[vertices.length];
+        copia.aristas = new Arista[aristas.length];
+
+        // Se crean objetos nuevos porque
+        // Vertice se puede modificar.
         for (int i = 0; i < numVertices; i++) {
 
             Vertice v = vertices[i];
 
-            copia.nuevoVertice(
+            Vertice nuevo = new Vertice(
                 v.nomVertice(), v.getNombreEdificio(),
                 v.getX(), v.getY()
             );
+
+            nuevo.asigVert(i);
+
+            copia.vertices[i] = nuevo;
         }
+
+        copia.numVertices = numVertices;
+
+        // Arista no tiene métodos que la modifiquen,
+        // por lo que se pueden compartir sin riesgo.
+        int copiadas = 0;
 
         for (int i = 0; i < numAristas; i++) {
 
-            Arista a = aristas[i];
+            if (!mismoPar(aristas[i], origen, destino)) {
 
-            if (!mismoPar(a, origen, destino)) {
-
-                copia.nuevaArista(
-                    vertices[a.getOrigen()].nomVertice(),
-                    vertices[a.getDestino()].nomVertice(),
-                    a.getCosto()
-                );
+                copia.aristas[copiadas] = aristas[i];
+                copiadas++;
             }
         }
+
+        copia.numAristas = copiadas;
 
         return copia;
     }
 
     /*
      * Indica si una arista une los vértices
-     * a y b en cualquier dirección.
+     * a y b, en cualquier dirección.
+     *
+     * Complejidad: O(1)
      */
     private boolean mismoPar(Arista arista, int a, int b) {
 
@@ -324,12 +372,14 @@ public class Grafo {
 
         return directo || inverso;
     }
-    
+
     /*
      * MOSTRAR EL GRAFO
      *
      * Imprime los edificios y todas
      * las conexiones registradas.
+     *
+     * Complejidad: O(V + E)
      */
     public void mostrarGrafo() {
 
@@ -361,4 +411,3 @@ public class Grafo {
         }
     }
 }
-

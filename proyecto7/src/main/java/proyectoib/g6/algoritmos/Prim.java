@@ -33,8 +33,10 @@ public class Prim {
 
     /*
      * ELEMENTO DE LA COLA DE PRIORIDAD
+     *
      */
-    private static class Candidato {
+    private static class Candidato
+            implements Comparable<Candidato> {
 
         final Arista arista;
         final int destino;
@@ -43,8 +45,20 @@ public class Prim {
             this.arista = arista;
             this.destino = destino;
         }
+
+        @Override
+        public int compareTo(Candidato otro) {
+            return Double.compare(
+                arista.getCosto(), otro.arista.getCosto()
+            );
+        }
     }
-  
+
+    /*
+     * METODO PRINCIPAL: EJECUTAR PRIM
+     *
+     * Complejidad: O(V + E log E)
+     */
     public ResultadoMST ejecutarPrim(Grafo grafo) {
 
         // PASO 1: Validar el grafo.
@@ -56,7 +70,7 @@ public class Prim {
 
         int numVertices = grafo.getNumVertices();
 
-        // Sin edificios
+        // Sin edificios no hay red que construir.
         if (numVertices == 0) {
 
             return new ResultadoMST(
@@ -70,12 +84,8 @@ public class Prim {
         // PASO 3: Preparar los datos del algoritmo.
         boolean[] visitado = new boolean[numVertices];
 
-        // Cola ordenada por costo desde el menor.
-        PriorityQueue<Candidato> cola = new PriorityQueue<>(
-            (a, b) -> Double.compare(
-                a.arista.getCosto(), b.arista.getCosto()
-            )
-        );
+        // Cola ordenada por costo (menor primero).
+        ColaPrioridad<Candidato> cola = new ColaPrioridad<>();
 
         // Un MST de V vértices tiene como máximo V - 1 aristas.
         Arista[] aristasMST = new Arista[numVertices - 1];
@@ -84,22 +94,28 @@ public class Prim {
         double costoTotal = 0;
 
         // PASO 4: Recorrer todos los vértices como posible
+        // inicio. Si la red es conexa, solo el primero
+        // inicia un recorrido
         for (int inicio = 0; inicio < numVertices; inicio++) {
 
             if (visitado[inicio]) {
                 continue;
             }
 
-            cola.clear();
+            cola.vaciar();
 
             visitado[inicio] = true;
             agregarCandidatos(inicio, adyacencia, visitado, cola);
 
             // PASO 5: Elegir iterativamente el enlace de
             // menor costo que incorpore un vértice nuevo.
-            while (!cola.isEmpty()) {
+            while (!cola.estaVacia()) {
 
-                Candidato mejor = cola.poll();
+                Candidato mejor = cola.extraerMinimo();
+
+                // Un vértice puede entrar a la cola por
+                // varios enlaces, si ya fue visitado
+                // este enlace formaría un ciclo.
                 if (visitado[mejor.destino]) {
                     continue;
                 }
@@ -117,6 +133,9 @@ public class Prim {
         }
 
         // PASO 6: Comprobar la conectividad.
+        //
+        // Con V vértices conectados se seleccionan
+        // exactamente V - 1 aristas.
         boolean conexo = (seleccionadas == numVertices - 1);
 
         return new ResultadoMST(
@@ -158,14 +177,14 @@ public class Prim {
             int vertice,
             Enlace[] adyacencia,
             boolean[] visitado,
-            PriorityQueue<Candidato> cola) {
+            ColaPrioridad<Candidato> cola) {
 
         Enlace actual = adyacencia[vertice];
 
         while (actual != null) {
 
             if (!visitado[actual.vecino]) {
-                cola.add(
+                cola.insertar(
                     new Candidato(actual.arista, actual.vecino)
                 );
             }

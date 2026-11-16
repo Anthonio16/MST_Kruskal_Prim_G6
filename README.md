@@ -56,7 +56,7 @@ Haga clic derecho sobre el proyecto en el Package Explorer y seleccione Run
 
 Ejecutar la Interfaz Gráfica:
 
-Haga clic derecho sobre el proyecto, seleccione el package proyectoib.g6.interfaz, seleccione la clase Lanzador.java y seleccione Run
+Haga clic derecho sobre el proyecto, clic derecho sobre l package proyectoib.g6.interfaz, seleccione la clase Lanzador.java y seleccione Run
 
 ## **4. Cómo Reproducir un Experimento Básico**
 

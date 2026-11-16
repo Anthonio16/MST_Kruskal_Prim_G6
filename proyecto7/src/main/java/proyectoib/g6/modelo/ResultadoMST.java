@@ -23,6 +23,8 @@ public class ResultadoMST {
      *
      * Recibe el resultado calculado por
      * uno de los algoritmos MST.
+     *
+     * Complejidad: O(cantidad)
      */
     public ResultadoMST(Arista[] aristas,
                         int cantidad,
@@ -77,5 +79,20 @@ public class ResultadoMST {
     public boolean esConexo() {
         return conexo;
     }
-}
 
+    /*
+     * Se usa en los informes para que siempre se
+     * indique cuándo NO existe un MST completo.
+     */
+    public String descripcionEstado() {
+
+        if (conexo) {
+            return "Existe un MST completo: todos los "
+                 + "vértices quedaron conectados.";
+        }
+
+        return "NO existe un MST completo: la red está vacía "
+             + "o desconectada. Las aristas mostradas forman "
+             + "un bosque de expansión mínima.";
+    }
+}
